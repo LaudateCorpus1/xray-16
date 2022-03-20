@@ -1253,13 +1253,17 @@ struct CCC_ToggleNoClip : public IConsole_Command
     void Execute(pcstr /*args*/) override
     {
         psActorFlags.invert(AF_NO_CLIP);
-        
-        if (Actor() != nullptr)
-        {
-            // Workaround for actor has no physics at all until first move
-            Fvector accel{};
-            Actor()->g_Physics(accel, 0.0f, 0.0f);
-        }
+
+        if (!g_pGameLevel)
+            return;
+
+        CActor* actor = smart_cast<CActor*>(Level().CurrentViewEntity());
+        if (!actor)
+            return;
+
+        // Workaround for actor has no physics at all until first move
+        Fvector accel{};
+        Actor()->g_Physics(accel, 0.0f, 0.0f);
     }
 };
 
@@ -1789,7 +1793,7 @@ private:
     std::atomic<bool> m_checkInProgress = false;
     bool m_informNoPatch = true;
 
-    void xr_stdcall ResultCallback(bool success, pcstr VersionName, pcstr URL)
+    void ResultCallback(bool success, pcstr VersionName, pcstr URL)
     {
         auto mm = MainMenu();
         if ((success || m_informNoPatch) && mm != nullptr)
@@ -2110,6 +2114,7 @@ void CCC_RegisterCommands()
     CMD3(CCC_Mask, "g_dynamic_music", &psActorFlags, AF_DYNAMIC_MUSIC);
     CMD3(CCC_Mask, "g_important_save", &psActorFlags, AF_IMPORTANT_SAVE);
     CMD3(CCC_Mask, "g_loading_stages", &psActorFlags, AF_LOADING_STAGES);
+    CMD3(CCC_Mask, "g_always_use_attitude_sensors", &psActorFlags, AF_ALWAYS_USE_ATTITUDE_SENSORS);
 
     CMD4(CCC_Integer, "g_inv_highlight_equipped", &g_inv_highlight_equipped, 0, 1);
     CMD4(CCC_Integer, "g_first_person_death", &g_first_person_death, 0, 1);

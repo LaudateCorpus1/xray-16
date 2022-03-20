@@ -410,8 +410,8 @@ void CActor::IR_OnControllerPress(int cmd, float x, float y)
     {
         const float LookFactor = GetLookFactor();
         CCameraBase* C = cameras[cam_active];
-        float scale = (cam_Active()->f_fov / g_fov) * psControllerSens * psMouseSensScale / 50.f / LookFactor; // XXX: use psControllerSensScale
-        OnAxisMove(x, y, scale, false); // XXX: controller axes invert
+        float scale = (cam_Active()->f_fov / g_fov) * psControllerStickSens * psControllerStickSensScale / 50.f / LookFactor;
+        OnAxisMove(x, y, scale, psControllerInvertY.test(1));
         break;
     }
 
@@ -506,8 +506,8 @@ void CActor::IR_OnControllerHold(int cmd, float x, float y)
     {
         const float LookFactor = GetLookFactor();
         CCameraBase* C = cameras[cam_active];
-        float scale = (cam_Active()->f_fov / g_fov) * psControllerSens * psMouseSensScale / 50.f / LookFactor; // XXX: use psControllerSensScale
-        OnAxisMove(x, y, scale,  false); // XXX: controller axes invert
+        float scale = (cam_Active()->f_fov / g_fov) * psControllerStickSens * psControllerStickSensScale / 50.f / LookFactor;
+        OnAxisMove(x, y, scale, psControllerInvertY.test(1));
         break;
     }
 
@@ -542,6 +542,29 @@ void CActor::IR_OnControllerHold(int cmd, float x, float y)
         IR_OnKeyboardHold(cmd);
         break;
     } // switch (GetBindedAction(axis))
+}
+
+void CActor::IR_OnControllerAttitudeChange(Fvector change)
+{
+    PIItem iitem = inventory().ActiveItem();
+    if (iitem && iitem->cast_hud_item())
+        iitem->cast_hud_item()->ResetSubStateTime();
+
+    if (Remote())
+        return;
+
+    if (!IsZoomAimingMode() && !psActorFlags.test(AF_ALWAYS_USE_ATTITUDE_SENSORS))
+        return;
+
+    if (m_holder)
+    {
+        m_holder->OnControllerAttitudeChange(change);
+        return;
+    }
+    
+    const float LookFactor = GetLookFactor();
+    const float scale = (cam_Active()->f_fov / g_fov) * psControllerSensorSens / 50.f / LookFactor;
+    OnAxisMove(change.x, change.y, scale, psControllerInvertY.test(1));
 }
 
 #include "HudItem.h"

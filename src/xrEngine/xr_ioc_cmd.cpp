@@ -712,6 +712,19 @@ public:
     }
 };
 
+class CCC_ControllerSensorEnable final : public CCC_Mask
+{
+public:
+    CCC_ControllerSensorEnable(pcstr name, Flags32* value, u32 mask)
+        : CCC_Mask(name, value, mask) {}
+
+    void Execute(pcstr args) override
+    {
+        CCC_Mask::Execute(args);
+        pInput->EnableControllerSensors(GetValue());
+    }
+};
+
 ENGINE_API float g_fov = 67.5f;
 ENGINE_API float psHUD_FOV = 0.45f;
 
@@ -838,10 +851,16 @@ void CCC_Register()
     CMD4(CCC_Float, "mouse_sens", &psMouseSens, 0.001f, 0.6f);
 
     // Gamepad
-    psControllerSens = 0.12f;
-    CMD4(CCC_Float, "gamepad_sens", &psControllerSens, 0.001f, 0.6f);
-    psControllerDeadZoneSens = 15.f;
-    CMD4(CCC_Float, "gamepad_deadzone_sens", &psControllerDeadZoneSens, 1.f, 35.f);
+    CMD3(CCC_Mask, "gamepad_invert_y", &psControllerInvertY, 1);
+    psControllerStickSens = 0.02f;
+    CMD4(CCC_Float, "gamepad_stick_sens", &psControllerStickSens, 0.001f, 0.6f);
+    psControllerStickDeadZone = 15.f;
+    CMD4(CCC_Float, "gamepad_stick_deadzone", &psControllerStickDeadZone, 1.f, 35.f);
+    psControllerSensorSens = 0.5f;
+    CMD4(CCC_Float, "gamepad_sensor_sens", &psControllerSensorSens, 0.01f, 3.f);
+    psControllerSensorDeadZone = 0.005f;
+    CMD4(CCC_Float, "gamepad_sensor_deadzone", &psControllerSensorDeadZone, 0.001f, 1.f);
+    CMD3(CCC_ControllerSensorEnable, "gamepad_sensors_enable", &psControllerEnableSensors, 1);
 
     // Camera
     CMD2(CCC_Float, "cam_inert", &psCamInert);

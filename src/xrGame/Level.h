@@ -255,18 +255,18 @@ protected:
     LevelMapSyncData map_data;
     bool synchronize_map_data();
     bool synchronize_client();
-    bool xr_stdcall net_start1();
-    bool xr_stdcall net_start2();
-    bool xr_stdcall net_start3();
-    bool xr_stdcall net_start4();
-    bool xr_stdcall net_start5();
-    bool xr_stdcall net_start6();
-    bool xr_stdcall net_start_client1();
-    bool xr_stdcall net_start_client2();
-    bool xr_stdcall net_start_client3();
-    bool xr_stdcall net_start_client4();
-    bool xr_stdcall net_start_client5();
-    bool xr_stdcall net_start_client6();
+    bool net_start1();
+    bool net_start2();
+    bool net_start3();
+    bool net_start4();
+    bool net_start5();
+    bool net_start6();
+    bool net_start_client1();
+    bool net_start_client2();
+    bool net_start_client3();
+    bool net_start_client4();
+    bool net_start_client5();
+    bool net_start_client6();
     void net_OnChangeSelfName(NET_Packet* P);
     void CalculateLevelCrc32();
 
@@ -322,6 +322,8 @@ public:
     void IR_OnControllerRelease(int key, float x, float y) override;
     void IR_OnControllerHold(int key, float x, float y) override;
 
+    void IR_OnControllerAttitudeChange(Fvector change) override;
+
     void IR_OnActivate(void) override;
 
     // Returns respawn point ID
@@ -348,7 +350,7 @@ public:
 #ifdef DEBUG
     IC CDebugRenderer& debug_renderer();
 #endif
-    void __stdcall script_gc(); // GC-cycle
+    void script_gc(); // GC-cycle
     IC CPHCommander& ph_commander();
     IC CPHCommander& ph_commander_scripts();
     IC CPHCommander& ph_commander_physics_worldstep();

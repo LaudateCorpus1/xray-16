@@ -175,8 +175,8 @@ void screenshot_manager::shedule_Update(u32 dt)
                     }
                 }
         #endif //#ifdef DEBUG*/
-        ULONG_PTR process_affinity_mask, tmp_dword;
 #ifndef XR_PLATFORM_LINUX // FIXME!!!
+        ULONG_PTR process_affinity_mask, tmp_dword;
         GetProcessAffinityMask(GetCurrentProcess(), &process_affinity_mask, &tmp_dword);
         process_screenshot(btwCount1(static_cast<u32>(process_affinity_mask)) == 1);
 #endif
@@ -243,7 +243,7 @@ void screenshot_manager::process_screenshot(bool singlecore)
 #endif
     Threading::SpawnThread(&screenshot_manager::screenshot_maker_thread, "screenshot_maker", 0, this);
 }
-void __stdcall screenshot_manager::jpeg_compress_cb(long progress)
+void screenshot_manager::jpeg_compress_cb(long progress)
 {
     /*#ifdef DEBUG
         Msg("* JPEG encoding progress : %d%%", progress);
